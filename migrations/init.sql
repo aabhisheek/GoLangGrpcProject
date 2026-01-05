@@ -1,10 +1,6 @@
 -- Voucher Payment Service Database Schema
 -- MySQL 8.0+
 
--- Create database if not exists
-CREATE DATABASE IF NOT EXISTS voucher_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE voucher_db;
-
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(36) PRIMARY KEY,

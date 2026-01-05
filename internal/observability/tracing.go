@@ -5,10 +5,11 @@ import (
 	"fmt"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -37,7 +38,7 @@ func InitTracing(cfg TracingConfig) (func(context.Context) error, error) {
 	res, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
-			semconv.SchemaURL,
+			"",
 			semconv.ServiceName(cfg.ServiceName),
 			semconv.DeploymentEnvironment(cfg.Environment),
 		),
@@ -76,15 +77,15 @@ func AddSpanAttributes(span trace.Span, attributes map[string]interface{}) {
 	for key, value := range attributes {
 		switch v := value.(type) {
 		case string:
-			span.SetAttributes(semconv.Key(key).String(v))
+			span.SetAttributes(attribute.String(key, v))
 		case int:
-			span.SetAttributes(semconv.Key(key).Int(v))
+			span.SetAttributes(attribute.Int(key, v))
 		case int64:
-			span.SetAttributes(semconv.Key(key).Int64(v))
+			span.SetAttributes(attribute.Int64(key, v))
 		case float64:
-			span.SetAttributes(semconv.Key(key).Float64(v))
+			span.SetAttributes(attribute.Float64(key, v))
 		case bool:
-			span.SetAttributes(semconv.Key(key).Bool(v))
+			span.SetAttributes(attribute.Bool(key, v))
 		}
 	}
 }

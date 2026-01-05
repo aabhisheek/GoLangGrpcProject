@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
 	"math/big"
 	"time"
@@ -269,7 +268,7 @@ func (s *VoucherService) BuyVoucher(ctx context.Context, userID, voucherID strin
 
 	go func() {
 		ctx := context.Background()
-		err := s.mq.Publish(ctx, s.mq.config.Queue, event)
+		err := s.mq.Publish(ctx, s.mq.GetQueueName(), event)
 		if err != nil {
 			s.logger.Error("failed to publish purchase event", zap.Error(err))
 		}

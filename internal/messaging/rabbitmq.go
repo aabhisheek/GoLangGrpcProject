@@ -305,3 +305,8 @@ func (mq *RabbitMQ) IsConnected() bool {
 	return mq.conn != nil && !mq.conn.IsClosed()
 }
 
+// GetQueueName returns the configured queue name
+func (mq *RabbitMQ) GetQueueName() string {
+	return mq.config.Queue
+}
+

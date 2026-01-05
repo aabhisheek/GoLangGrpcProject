@@ -72,7 +72,7 @@ func (r *PaymentEventRepository) GetByID(ctx context.Context, id string) (*domai
 	`
 
 	event := &domain.PaymentEvent{}
-	var transactionID, processedAt sql.NullString
+	var transactionID sql.NullString
 	var processedTime sql.NullTime
 
 	err := r.getDB().QueryRowContext(ctx, query, id).Scan(

@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"time"
 
 	voucherv1 "github.com/voucher-payment-service/api/generated"
 	"github.com/voucher-payment-service/internal/domain"

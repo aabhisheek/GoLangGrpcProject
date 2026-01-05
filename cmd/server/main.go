@@ -196,10 +196,10 @@ func startGateway(logger *zap.Logger) error {
 	}
 
 	// Start HTTP server
-	logger.Info("starting HTTP gateway on :8080")
+	logger.Info("starting HTTP gateway on :8081")
 	
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":8081",
 		Handler: mux,
 	}
 
