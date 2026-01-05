@@ -1,0 +1,211 @@
+syntax = "proto3";
+
+package voucher.v1;
+
+option go_package = "github.com/voucher-payment-service/api/generated;voucherv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// VoucherService handles voucher operations
+service VoucherService {
+  // Search for vouchers
+  rpc SearchVouchers(SearchVouchersRequest) returns (SearchVouchersResponse) {
+    option (google.api.http) = {
+      get: "/v1/vouchers/search"
+    };
+  }
+
+  // Buy a voucher
+  rpc BuyVoucher(BuyVoucherRequest) returns (BuyVoucherResponse) {
+    option (google.api.http) = {
+      post: "/v1/vouchers/buy"
+      body: "*"
+    };
+  }
+
+  // Get voucher details
+  rpc GetVoucher(GetVoucherRequest) returns (Voucher) {
+    option (google.api.http) = {
+      get: "/v1/vouchers/{voucher_id}"
+    };
+  }
+
+  // List user vouchers
+  rpc ListUserVouchers(ListUserVouchersRequest) returns (ListUserVouchersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/vouchers"
+    };
+  }
+}
+
+// WalletService handles wallet and payment operations
+service WalletService {
+  // Get wallet balance
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/balance"
+    };
+  }
+
+  // Add money to wallet
+  rpc AddMoney(AddMoneyRequest) returns (AddMoneyResponse) {
+    option (google.api.http) = {
+      post: "/v1/users/{user_id}/wallet/add"
+      body: "*"
+    };
+  }
+
+  // List transactions
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/transactions"
+    };
+  }
+}
+
+// Voucher represents a voucher entity
+message Voucher {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string brand = 4;
+  string category = 5;
+  double face_value = 6;
+  double discount_percentage = 7;
+  double selling_price = 8;
+  int32 stock_quantity = 9;
+  bool is_active = 10;
+  google.protobuf.Timestamp valid_from = 11;
+  google.protobuf.Timestamp valid_until = 12;
+  string terms_and_conditions = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
+}
+
+// SearchVouchersRequest request to search vouchers
+message SearchVouchersRequest {
+  string query = 1;
+  string category = 2;
+  string brand = 3;
+  double min_price = 4;
+  double max_price = 5;
+  int32 page = 6;
+  int32 page_size = 7;
+}
+
+// SearchVouchersResponse response with vouchers list
+message SearchVouchersResponse {
+  repeated Voucher vouchers = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// BuyVoucherRequest request to buy a voucher
+message BuyVoucherRequest {
+  string user_id = 1;
+  string voucher_id = 2;
+  int32 quantity = 3;
+  string payment_method = 4; // wallet, upi
+  string upi_id = 5; // if payment_method is upi
+}
+
+// BuyVoucherResponse response after buying voucher
+message BuyVoucherResponse {
+  string transaction_id = 1;
+  string status = 2;
+  double amount_paid = 3;
+  repeated PurchasedVoucher purchased_vouchers = 4;
+  google.protobuf.Timestamp purchased_at = 5;
+}
+
+// PurchasedVoucher represents a purchased voucher
+message PurchasedVoucher {
+  string id = 1;
+  string voucher_id = 2;
+  string voucher_code = 3;
+  string pin = 4;
+  string status = 5; // active, used, expired
+  google.protobuf.Timestamp valid_until = 6;
+}
+
+// GetVoucherRequest request to get voucher details
+message GetVoucherRequest {
+  string voucher_id = 1;
+}
+
+// ListUserVouchersRequest request to list user's vouchers
+message ListUserVouchersRequest {
+  string user_id = 1;
+  string status = 2; // all, active, used, expired
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// ListUserVouchersResponse response with user's vouchers
+message ListUserVouchersResponse {
+  repeated PurchasedVoucher vouchers = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// GetBalanceRequest request to get wallet balance
+message GetBalanceRequest {
+  string user_id = 1;
+}
+
+// GetBalanceResponse response with balance
+message GetBalanceResponse {
+  string user_id = 1;
+  double balance = 2;
+  string currency = 3;
+}
+
+// AddMoneyRequest request to add money to wallet
+message AddMoneyRequest {
+  string user_id = 1;
+  double amount = 2;
+  string payment_method = 3; // upi, card, netbanking
+  string transaction_reference = 4;
+}
+
+// AddMoneyResponse response after adding money
+message AddMoneyResponse {
+  string transaction_id = 1;
+  string status = 2;
+  double new_balance = 3;
+  google.protobuf.Timestamp completed_at = 4;
+}
+
+// Transaction represents a wallet transaction
+message Transaction {
+  string id = 1;
+  string user_id = 2;
+  string type = 3; // credit, debit
+  double amount = 4;
+  double balance_before = 5;
+  double balance_after = 6;
+  string description = 7;
+  string reference_id = 8;
+  string status = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+// ListTransactionsRequest request to list transactions
+message ListTransactionsRequest {
+  string user_id = 1;
+  string type = 2; // all, credit, debit
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// ListTransactionsResponse response with transactions
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+

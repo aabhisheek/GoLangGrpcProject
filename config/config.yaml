@@ -1,0 +1,52 @@
+server:
+  grpc_port: 50051
+  http_port: 8080
+  environment: development
+
+database:
+  host: localhost
+  port: 3306
+  user: voucheruser
+  password: voucherpass
+  database: voucher_db
+  max_connections: 25
+  max_idle_connections: 5
+  connection_lifetime: 5m
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 10
+  cache_ttl: 300s
+
+rabbitmq:
+  host: localhost
+  port: 5672
+  user: guest
+  password: guest
+  exchange: voucher.events
+  queue: voucher.purchases
+  dlq: voucher.purchases.dlq
+  prefetch_count: 10
+
+observability:
+  jaeger_endpoint: http://localhost:14268/api/traces
+  service_name: voucher-payment-service
+  enable_tracing: true
+  enable_metrics: true
+
+logging:
+  level: info
+  format: json
+
+rate_limiting:
+  enabled: true
+  requests_per_second: 100
+  burst: 200
+
+worker_pool:
+  size: 10
+  queue_size: 100
+
