@@ -70,6 +70,39 @@ func (r *WalletRepository) GetByUserID(ctx context.Context, userID string) (*dom
 	return wallet, nil
 }
 
+// GetByUserIDReadOnly retrieves a wallet by user ID without locking (for read-only operations)
+func (r *WalletRepository) GetByUserIDReadOnly(ctx context.Context, userID string) (*domain.Wallet, error) {
+	query := `
+		SELECT id, user_id, balance, currency, is_locked, created_at, updated_at
+		FROM wallets
+		WHERE user_id = ?
+	`
+
+	wallet := &domain.Wallet{}
+	err := r.getDB().QueryRowContext(ctx, query, userID).Scan(
+		&wallet.ID,
+		&wallet.UserID,
+		&wallet.Balance,
+		&wallet.Currency,
+		&wallet.IsLocked,
+		&wallet.CreatedAt,
+		&wallet.UpdatedAt,
+	)
+
+	if err == sql.ErrNoRows {
+		return nil, domain.ErrNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get wallet: %w", err)
+	}
+
+	if wallet.IsLocked {
+		return nil, domain.ErrWalletLocked
+	}
+
+	return wallet, nil
+}
+
 // UpdateBalance updates wallet balance atomically
 func (r *WalletRepository) UpdateBalance(ctx context.Context, userID string, amount float64, txType string) (*domain.Wallet, error) {
 	// First, get current balance with lock

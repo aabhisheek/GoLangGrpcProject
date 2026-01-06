@@ -22,8 +22,11 @@ type VoucherRepository interface {
 
 // WalletRepository defines methods for wallet data access
 type WalletRepository interface {
-	// GetByUserID retrieves a wallet by user ID
+	// GetByUserID retrieves a wallet by user ID with row locking (for updates)
 	GetByUserID(ctx context.Context, userID string) (*domain.Wallet, error)
+	
+	// GetByUserIDReadOnly retrieves a wallet by user ID without locking (for reads)
+	GetByUserIDReadOnly(ctx context.Context, userID string) (*domain.Wallet, error)
 	
 	// UpdateBalance updates wallet balance (atomic operation)
 	UpdateBalance(ctx context.Context, userID string, amount float64, txType string) (*domain.Wallet, error)

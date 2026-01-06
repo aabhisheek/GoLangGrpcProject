@@ -44,8 +44,8 @@ func (s *WalletService) GetBalance(ctx context.Context, userID string) (*domain.
 		return &wallet, nil
 	}
 
-	// Cache miss, query database
-	walletPtr, err := s.uow.Wallets().GetByUserID(ctx, userID)
+	// Cache miss, query database (using read-only method to avoid transaction requirement)
+	walletPtr, err := s.uow.Wallets().GetByUserIDReadOnly(ctx, userID)
 	if err != nil {
 		s.logger.Error("failed to get wallet", zap.String("user_id", userID), zap.Error(err))
 		return nil, err
@@ -106,6 +106,7 @@ func (s *WalletService) AddMoney(ctx context.Context, userID string, amount floa
 		ReferenceID:   transactionRef,
 		PaymentMethod: paymentMethod,
 		Status:        "completed",
+		Metadata:      "{}",
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}

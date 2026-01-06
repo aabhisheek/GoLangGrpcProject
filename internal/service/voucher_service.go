@@ -176,6 +176,7 @@ func (s *VoucherService) BuyVoucher(ctx context.Context, userID, voucherID strin
 			ReferenceID:   voucherID,
 			PaymentMethod: "wallet",
 			Status:        "completed",
+			Metadata:      "{}",
 			CreatedAt:     time.Now(),
 			UpdatedAt:     time.Now(),
 		}
@@ -192,6 +193,7 @@ func (s *VoucherService) BuyVoucher(ctx context.Context, userID, voucherID strin
 			ReferenceID:   voucherID,
 			PaymentMethod: fmt.Sprintf("upi:%s", upiID),
 			Status:        "completed",
+			Metadata:      "{}",
 			CreatedAt:     time.Now(),
 			UpdatedAt:     time.Now(),
 		}
