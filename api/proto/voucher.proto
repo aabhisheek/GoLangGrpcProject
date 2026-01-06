@@ -9,10 +9,17 @@ import "google/protobuf/timestamp.proto";
 
 // VoucherService handles voucher operations
 service VoucherService {
+  // Get voucher details
+  rpc GetVoucher(GetVoucherRequest) returns (Voucher) {
+    option (google.api.http) = {
+      get: "/v1/vouchers/{voucher_id}"
+    };
+  }
+
   // Search for vouchers
   rpc SearchVouchers(SearchVouchersRequest) returns (SearchVouchersResponse) {
     option (google.api.http) = {
-      get: "/v1/vouchers/search"
+      get: "/v1/vouchers"
     };
   }
 
@@ -21,13 +28,6 @@ service VoucherService {
     option (google.api.http) = {
       post: "/v1/vouchers/buy"
       body: "*"
-    };
-  }
-
-  // Get voucher details
-  rpc GetVoucher(GetVoucherRequest) returns (Voucher) {
-    option (google.api.http) = {
-      get: "/v1/vouchers/{voucher_id}"
     };
   }
 

@@ -70,7 +70,7 @@ func (r *PaymentEventRepository) GetByID(ctx context.Context, id string) (*domai
 		FROM payment_events
 		WHERE id = ?
 	`
-
+     
 	event := &domain.PaymentEvent{}
 	var transactionID sql.NullString
 	var processedTime sql.NullTime
