@@ -153,7 +153,7 @@ func rollbackMigrations(db *sql.DB) error {
 		"wallets",
 		"users",
 	}
-
+     
 	for _, table := range tables {
 		_, err := db.Exec(fmt.Sprintf("DROP TABLE IF EXISTS %s", table))
 		if err != nil {
