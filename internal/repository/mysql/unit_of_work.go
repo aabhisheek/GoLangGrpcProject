@@ -61,6 +61,14 @@ func (uow *UnitOfWork) Commit() error {
 	}
 
 	uow.tx = nil
+	// Clear all repository instances so they get recreated without transaction
+	uow.voucherRepo = nil
+	uow.walletRepo = nil
+	uow.transactionRepo = nil
+	uow.purchasedVoucherRepo = nil
+	uow.userRepo = nil
+	uow.paymentEventRepo = nil
+	
 	return nil
 }
 
@@ -76,6 +84,14 @@ func (uow *UnitOfWork) Rollback() error {
 	}
 
 	uow.tx = nil
+	// Clear all repository instances so they get recreated without transaction
+	uow.voucherRepo = nil
+	uow.walletRepo = nil
+	uow.transactionRepo = nil
+	uow.purchasedVoucherRepo = nil
+	uow.userRepo = nil
+	uow.paymentEventRepo = nil
+	
 	return nil
 }
 
